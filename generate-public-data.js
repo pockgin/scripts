@@ -60,6 +60,7 @@ async function main() {
       author: data.author || "Unknown",
       description: data.description || "",
       icon_url: data.icon_url || "happy_ghast.png",
+      featured: data.featured || false,
       verified: data.verified || false,
       stable_version: data.versions?.stable?.version || null,
       total_downloads: data.total_downloads || 0,
