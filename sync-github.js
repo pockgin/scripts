@@ -136,6 +136,7 @@ async function syncPlugin(entry) {
 
   // Try to parse plugin.yml for enriched metadata
   let pluginYml = null;
+  let readmeMarkdown = "";
   const { remaining } = getRateLimitInfo();
   if (remaining === null || remaining >= LOW_QUOTA_THRESHOLD) {
     const raw = await fetchFileContent(owner, repo, "plugin.yml", approvedTag || "HEAD", TOKEN);
@@ -143,6 +144,11 @@ async function syncPlugin(entry) {
       try {
         pluginYml = yaml.load(raw);
       } catch { /* ignore parse errors */ }
+    }
+
+    const readmeRaw = await fetchReadmeContent(owner, repo, approvedTag || "HEAD");
+    if (readmeRaw) {
+      readmeMarkdown = readmeRaw;
     }
   }
 
@@ -173,6 +179,7 @@ async function syncPlugin(entry) {
     name: entry.name,
     author,
     description,
+    readme_markdown: readmeMarkdown,
     repo: entry.repo,
     archive_repo: entry.archive_repo || null,
     icon_url: iconUrl,
@@ -189,6 +196,15 @@ async function syncPlugin(entry) {
     comments: entry.comments || { enabled: false },
     build: entry.build,
   };
+}
+
+async function fetchReadmeContent(owner, repo, ref) {
+  const candidates = ["README.md", "README.MD", "readme.md"];
+  for (const filePath of candidates) {
+    const raw = await fetchFileContent(owner, repo, filePath, ref, TOKEN);
+    if (raw) return raw;
+  }
+  return null;
 }
 
 function buildVersionInfo(release) {
