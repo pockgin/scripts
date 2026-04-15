@@ -167,6 +167,22 @@ async function syncPlugin(entry) {
   // Resolve icon
   const iconUrl = await resolveIcon(entry.id, allReleases, owner, repo, TOKEN, PUBLIC_DIR, approvedTag || "HEAD");
 
+  const apiSupport = normalizeStringList(pluginYml?.api);
+  const requiredDeps = normalizeStringList(pluginYml?.depend);
+  const optionalDeps = normalizeStringList(pluginYml?.softdepend);
+  const producers = buildProducers(pluginYml, owner);
+  const tags = Array.isArray(repoInfo.topics) ? repoInfo.topics.filter(Boolean) : [];
+  const whatsNew = approvedRelease?.body || "";
+  const lastUpdatedAt = approvedRelease?.published_at || repoInfo.pushed_at || null;
+
+  const licenseInfo = repoInfo.license
+    ? {
+        spdx_id: repoInfo.license.spdx_id || null,
+        name: repoInfo.license.name || null,
+        url: repoInfo.license.url || null,
+      }
+    : null;
+
   // Recent builds (up to 5)
   const recentBuilds = allReleases.slice(0, 5).map((r) => ({
     tag: r.tag_name,
@@ -188,6 +204,16 @@ async function syncPlugin(entry) {
     stars: repoInfo.stargazers_count || 0,
     total_downloads: totalDownloads,
     last_commit_at: repoInfo.pushed_at || null,
+    last_updated_at: lastUpdatedAt,
+    license: licenseInfo,
+    api_support: apiSupport,
+    dependencies: {
+      required: requiredDeps,
+      optional: optionalDeps,
+    },
+    tags,
+    producers,
+    whats_new: whatsNew,
     versions: {
       stable: stableVersion,
       dev: devVersion,
@@ -226,6 +252,22 @@ function pharAssetUrl(release) {
   if (!release.assets) return null;
   const phar = release.assets.find((a) => a.name.endsWith(".phar"));
   return phar ? phar.browser_download_url : null;
+}
+
+function normalizeStringList(value) {
+  if (Array.isArray(value)) {
+    return value.map((v) => String(v).trim()).filter(Boolean);
+  }
+  if (value === undefined || value === null || value === "") return [];
+  return [String(value).trim()].filter(Boolean);
+}
+
+function buildProducers(pluginYml, owner) {
+  const set = new Set();
+  normalizeStringList(pluginYml?.author).forEach((x) => set.add(x));
+  normalizeStringList(pluginYml?.authors).forEach((x) => set.add(x));
+  if (owner) set.add(owner);
+  return Array.from(set);
 }
 
 main();
