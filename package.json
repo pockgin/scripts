@@ -1,0 +1,19 @@
+{
+  "name": "@pockgin/scripts",
+  "version": "0.1.0",
+  "description": "Data pipeline scripts for the Pockgin plugin registry: validate, sync, generate.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node validate-registry.js",
+    "sync": "node sync-github.js",
+    "generate": "node generate-public-data.js",
+    "pipeline": "node validate-registry.js && node sync-github.js && node generate-public-data.js"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
