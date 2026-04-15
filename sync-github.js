@@ -17,7 +17,7 @@ import yaml from "js-yaml";
 
 const REGISTRY_DIR = process.env.REGISTRY_DIR || join(process.cwd(), "..", "pockgin", "registry", "plugins");
 const SYNC_CACHE_DIR = join(process.cwd(), ".sync-cache");
-const PUBLIC_DIR = process.env.PUBLIC_DIR || join(process.cwd(), "..", "pockgin", "public");
+const PUBLIC_DIR = process.env.PUBLIC_DIR || join(process.cwd(), "..", "pockgin");
 const TOKEN = process.env.GITHUB_TOKEN || null;
 
 const LOW_QUOTA_THRESHOLD = 50;
