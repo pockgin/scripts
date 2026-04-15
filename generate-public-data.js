@@ -61,7 +61,6 @@ async function main() {
       description: data.description || "",
       icon_url: data.icon_url || "happy_ghast.png",
       featured: data.featured || false,
-      verified: data.verified || false,
       stable_version: data.versions?.stable?.version || null,
       total_downloads: data.total_downloads || 0,
       stars: data.stars || 0,
@@ -86,7 +85,6 @@ async function main() {
   const stats = {
     total_plugins: plugins.length,
     total_downloads: plugins.reduce((sum, p) => sum + (p.total_downloads || 0), 0),
-    total_verified: plugins.filter((p) => p.verified).length,
     last_sync_at: new Date().toISOString(),
   };
   await writeFile(join(PUBLIC_DATA_DIR, "stats.json"), JSON.stringify(stats, null, 2));

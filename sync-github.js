@@ -200,7 +200,6 @@ async function syncPlugin(entry) {
     archive_repo: entry.archive_repo || null,
     icon_url: iconUrl,
     featured: entry.featured || false,
-    verified: entry.verified || false,
     approved_release_tag: approvedTag,
     stars: repoInfo.stargazers_count || 0,
     total_downloads: totalDownloads,
