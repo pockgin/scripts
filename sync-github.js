@@ -165,7 +165,7 @@ async function syncPlugin(entry) {
     owner;
 
   // Resolve icon
-  const iconUrl = await resolveIcon(entry.id, allReleases, owner, repo, TOKEN, PUBLIC_DIR);
+  const iconUrl = await resolveIcon(entry.id, allReleases, owner, repo, TOKEN, PUBLIC_DIR, approvedTag || "HEAD");
 
   // Recent builds (up to 5)
   const recentBuilds = allReleases.slice(0, 5).map((r) => ({
